@@ -1,5 +1,5 @@
 import { useFrame } from '@react-three/fiber'
-import { Sky, ContactShadows, OrbitControls, useHelper, BakeShadows, SoftShadows, AccumulativeShadows, RandomizedLight, Environment } from '@react-three/drei'
+import { Lightformer, Sky, ContactShadows, OrbitControls, useHelper, BakeShadows, SoftShadows, AccumulativeShadows, RandomizedLight, Environment } from '@react-three/drei'
 import { useContext, useRef } from 'react'
 import { Perf } from 'r3f-perf'
 import *as THREE from "three"
@@ -44,18 +44,37 @@ export default function Experience() {
     const { envMapIntensity } = useControls("envMapIntensity", { envMapIntensity: { value: 1, min: 0, max: 12 } })
     return <>
         <Environment
+
             background
-            files={[
-                "./environmentMaps/2/px.jpg",
-                "./environmentMaps/2/nx.jpg",
-                "./environmentMaps/2/py.jpg",
-                "./environmentMaps/2/ny.jpg",
-                "./environmentMaps/2/pz.jpg",
-                "./environmentMaps/2/nz.jpg",
-            ]}
-        />
+        // files={[
+        //     "./environmentMaps/2/px.jpg",
+        //     "./environmentMaps/2/nx.jpg",
+        //     "./environmentMaps/2/py.jpg",
+        //     "./environmentMaps/2/ny.jpg",
+        //     "./environmentMaps/2/pz.jpg",
+        //     "./environmentMaps/2/nz.jpg",
+        // ]}
+        // files={"./environmentMaps/the_sky_is_on_fire_2k.hdr"}
+        // preset='night'
+        // preset='city'
+        >
+            <color args={["black"]} attach="background" />
+            <Lightformer position-z={-5} scale={10}
+                color="red"
+                intensity={1}
+                form={"ring"}
+
+            />
+            {/* <mesh position-z={-5} scale={10}> */}
+            {/* <planeGeometry /> */}
+            {/* <meshBasicMaterial color="red" /> */}
+
+            {/* </mesh> */}
+        </Environment >
+
+
         {/* <BakeShadows /> */}
-        <ContactShadows position={[0, -0.99, 0]} scale={10} resolution={512} far={5} color={color} opacity={opacity} blur={blur} frames={1} />
+        < ContactShadows position={[0, -0.99, 0]} scale={10} resolution={512} far={5} color={color} opacity={opacity} blur={blur} frames={1} />
         <color args={["black"]} attach="background" />
 
         <Perf position="top-left" />
