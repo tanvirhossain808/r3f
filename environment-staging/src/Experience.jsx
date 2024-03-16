@@ -1,5 +1,5 @@
 import { useFrame } from '@react-three/fiber'
-import { Sky, ContactShadows, OrbitControls, useHelper, BakeShadows, SoftShadows, AccumulativeShadows, RandomizedLight } from '@react-three/drei'
+import { Sky, ContactShadows, OrbitControls, useHelper, BakeShadows, SoftShadows, AccumulativeShadows, RandomizedLight, Environment } from '@react-three/drei'
 import { useContext, useRef } from 'react'
 import { Perf } from 'r3f-perf'
 import *as THREE from "three"
@@ -40,7 +40,20 @@ export default function Experience() {
     const { sunPosition } = useControls("sky", {
         sunPosition: { value: [1, 2, 3] }
     })
+
+    const { envMapIntensity } = useControls("envMapIntensity", { envMapIntensity: { value: 1, min: 0, max: 12 } })
     return <>
+        <Environment
+            background
+            files={[
+                "./environmentMaps/2/px.jpg",
+                "./environmentMaps/2/nx.jpg",
+                "./environmentMaps/2/py.jpg",
+                "./environmentMaps/2/ny.jpg",
+                "./environmentMaps/2/pz.jpg",
+                "./environmentMaps/2/nz.jpg",
+            ]}
+        />
         {/* <BakeShadows /> */}
         <ContactShadows position={[0, -0.99, 0]} scale={10} resolution={512} far={5} color={color} opacity={opacity} blur={blur} frames={1} />
         <color args={["black"]} attach="background" />
@@ -65,26 +78,26 @@ export default function Experience() {
         </AccumulativeShadows> */}
 
 
-        <directionalLight ref={directionalLight} castShadow position={sunPosition} intensity={1.5} shadow-mapSize={[1024, 1024]} shadow-camera-top={4} shadow-camera-bottom={-4} shadow-camera-right={4} shadow-camera-left={-4}
+        {/* <directionalLight ref={directionalLight} castShadow position={sunPosition} intensity={1.5} shadow-mapSize={[1024, 1024]} shadow-camera-top={4} shadow-camera-bottom={-4} shadow-camera-right={4} shadow-camera-left={-4}
             shadow-camera-near={1}
             shadow-camera-far={10}
 
-        />
-        <ambientLight intensity={0.5} />
-        <Sky sunPosition={sunPosition} />
+        /> */}
+        {/* <ambientLight intensity={0.5} /> */}
+        {/* <Sky sunPosition={sunPosition} /> */}
         <mesh position-x={- 2} castShadow>
             <sphereGeometry />
-            <meshStandardMaterial color="orange" />
+            <meshStandardMaterial color="orange" envMapIntensity={envMapIntensity} />
         </mesh>
 
         <mesh ref={cube} castShadow position-x={2} scale={1.5}>
             <boxGeometry />
-            <meshStandardMaterial color="mediumpurple" />
+            <meshStandardMaterial color="mediumpurple" envMapIntensity={envMapIntensity} />
         </mesh>
 
-        <mesh /* receiveShadow  */ position-y={- 1} rotation-x={- Math.PI * 0.5} scale={10}>
+        <mesh /* receiveShadow  */ position-y={- 1} rotation-x={- Math.PI * 0.5} scale={10} >
             <planeGeometry />
-            <meshStandardMaterial color="greenyellow" />
+            <meshStandardMaterial color="greenyellow" envMapIntensity={envMapIntensity} />
         </mesh>
 
     </>
