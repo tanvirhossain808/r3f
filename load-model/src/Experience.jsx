@@ -4,6 +4,9 @@ import { Perf } from 'r3f-perf'
 
 import Model from './Model'
 import { Suspense } from 'react'
+import PlaceHolder from './PlaceHolder'
+import Hamburger from './Hamburger'
+import Fox from './Fox'
 export default function Experience() {
 
     return <>
@@ -12,7 +15,7 @@ export default function Experience() {
 
         <OrbitControls makeDefault />
 
-        <directionalLight castShadow position={[1, 2, 3]} intensity={1.5} />
+        <directionalLight castShadow position={[1, 2, 3]} intensity={1.5} shadow-normalBias={0.05} />
         <ambientLight intensity={0.5} />
 
         {/* <mesh castShadow position-x={- 2}>
@@ -29,9 +32,12 @@ export default function Experience() {
             <planeGeometry />
             <meshStandardMaterial color="greenyellow" />
         </mesh>
-        <Suspense>
-            <Model />
+        <Suspense
+            fallback={<PlaceHolder />}
+        >
+            {/* <Model /> */}
+            <Hamburger scale={0.35} />
         </Suspense>
-
+        <Fox />
     </>
 }
