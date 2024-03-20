@@ -1,11 +1,15 @@
-import { OrbitControls } from '@react-three/drei'
+import { OrbitControls, useGLTF } from '@react-three/drei'
 import { Perf } from 'r3f-perf'
-import { CuboidCollider, Debug, Physics, RigidBody } from '@react-three/rapier'
-import { useRef } from 'react'
+import { CuboidCollider, CylinderCollider, Debug, InstancedRigidBodies, Physics, RigidBody } from '@react-three/rapier'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from "three"
 
 export default function Experience() {
+    const hamburger = useGLTF('./hamburger.glb')
+    const [hitSound] = useState(() => {
+        return new Audio("./hit.mp3")
+    })
     const twisterRef = useRef(null)
     const cubeRef = useRef(null)
     const cubeJump = () => {
@@ -32,6 +36,50 @@ export default function Experience() {
 
 
     })
+
+    const collisionEnter = () => {
+        /*        hitSound.currentTime = 0
+               hitSound.volume = Math.random()
+               hitSound.play() */
+    }
+    const collisionExit = () => {
+        // console.log('exit');
+    }
+    const cubeCount = 100
+    const cubes = useRef(null)
+
+    /*     useEffect(() => {
+            for (let i = 0; i < cubeCount; i++) {
+                const matrix = new THREE.Matrix4()
+                matrix.compose(
+                    new THREE.Vector3(i * 2),
+                    new THREE.Quaternion(),
+                    new THREE.Vector3(1, 1, 1)
+    
+                )
+                cubes.current.setMatrixAt(i, matrix)
+            }
+        }, []) */
+    const cubesTransform = useMemo(() => {
+        const position = []
+        const rotation = []
+        const scales = []
+
+        for (let i = 0; i < cubeCount; i++) {
+            position.push([(Math.random() - 0.5) * 8, 6 + i * 0.2, (Math.random() - 0.5) * 8])
+
+            rotation.push([Math.random(), Math.random(), Math.random()])
+
+            const scale = 0.2 + Math.random() * 0.8
+            scales.push([scale, scale, scale])
+        }
+
+        return {
+            position, rotation, scales
+        }
+
+    }, [])
+
     return <>
 
         <color args={["#000000"]} attach="background" />
@@ -64,6 +112,8 @@ export default function Experience() {
                 restitution={0.5}
                 friction={0.7}
                 colliders={false}
+                onCollisionEnter={collisionEnter}
+                onCollisionExit={collisionExit}
             >
                 <mesh castShadow onClick={cubeJump}/* position={[2, 2, 0]} */>
                     <boxGeometry />
@@ -92,6 +142,44 @@ export default function Experience() {
                     <meshStandardMaterial color={"red"} />
                 </mesh>
             </RigidBody>
+            <RigidBody position={[0, 4, 0]}
+                colliders={false}
+
+            >
+                <primitive object={hamburger.scene} scale={0.25} />
+                <CylinderCollider args={[0.5, 1.25]} />
+            </RigidBody>
+            <RigidBody type='fixed'>
+                <CuboidCollider args={[5, 2, 0.5]}
+                    position={[0, 1, 5.25]}
+                />
+                <CuboidCollider args={[5, 2, 0.5]}
+                    position={[0, 1, -5.25]}
+                />
+                <CuboidCollider args={[0.5, 2, 5]}
+                    position={[-5.5, 1, 0]}
+                />
+                <CuboidCollider args={[0.5, 2, 5]}
+                    position={[5.5, 1, 0]}
+                />
+
+            </RigidBody>
+            <InstancedRigidBodies
+                positions={cubesTransform.position}
+                rotations={cubesTransform.rotation}
+            // scales={cubesTransform.scales}
+
+
+            >
+                <instancedMesh castShadow ref={cubes} args={[null, null, cubeCount]}>
+                    <boxGeometry />
+                    <meshStandardMaterial color="tomato"
+
+                    />
+
+                </instancedMesh>
+            </InstancedRigidBodies>
+
         </Physics>
 
     </>
